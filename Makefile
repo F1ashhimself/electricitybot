@@ -1,5 +1,5 @@
 run:
-	nohup electricitybot &
+	poetry run nohup electricitybot &
 
 test: test-flake test-black test-isort test-unit
 
