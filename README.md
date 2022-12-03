@@ -1,6 +1,8 @@
 # Electricity telegram bot
 Bot that will send telegram message in case of electricity state was changed
 
+![_](_.png)
+
 ## How to install:
 1. Install python > 3.10
 2. Install `make` and `nohup`
