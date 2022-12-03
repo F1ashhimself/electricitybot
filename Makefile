@@ -1,8 +1,7 @@
 run:
 	nohup electricitybot &
 
-test:
-	make -k test-flake test-black test-isort test-unit
+test: test-flake test-black test-isort test-unit
 
 test-isort:
 	poetry run isort --check-only -m3 .

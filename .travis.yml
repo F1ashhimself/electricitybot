@@ -1,0 +1,8 @@
+language: python
+python:
+  - "3.10"
+install:
+  - pip install poetry==1.1.15
+  - poetry install
+script:
+  - make test
