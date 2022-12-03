@@ -1,4 +1,4 @@
-name: tests
+name: Tests
 on: push
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
 
       - name: Install poetry
         run: |
-          pip install poetry
+          pip install poetry==1.1.15
 
       - name: Install dependencies
         run: |
