@@ -3,7 +3,7 @@ from time import sleep, time
 
 import telegram
 
-from electricitybot.settings import settings
+from .settings import settings
 
 
 class ElectricityChecker:
