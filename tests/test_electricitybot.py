@@ -5,7 +5,8 @@ import pytest
 from freezegun import freeze_time
 from hamcrest import assert_that, equal_to, has_properties, instance_of
 
-from electricitybot import ElectricityChecker, settings
+from electricitybot import ElectricityChecker
+from electricitybot.settings import settings
 
 
 @patch("telegram.Bot")
@@ -19,14 +20,14 @@ class TestElectricitybot:
         assert_that(
             e_checker,
             has_properties(
-                chat_id=settings.CHAT_ID,
-                ip_to_check=settings.IP_TO_CHECK,
-                timeout=settings.TIMEOUT,
+                chat_id=settings.chat_id,
+                ip_to_check=settings.ip_to_check,
+                timeout=settings.timeout,
                 last_state_change_time=None,
             ),
         )
 
-        tg_bot.assert_called_once_with(token=settings.API_TOKEN)
+        tg_bot.assert_called_once_with(token=settings.api_token)
 
     @pytest.mark.parametrize("e_state", [True, False])
     @patch("electricitybot.ElectricityChecker.check_electricity", Mock(return_value=True))
