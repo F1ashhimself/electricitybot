@@ -5,7 +5,7 @@ COPY . /opt
 WORKDIR /opt
 
 RUN apt update && \
-    apt install -y --no-install-recommends make iputils-ping && \
+    apt install -y --no-install-recommends iputils-ping && \
     python -m pip install poetry && \
     poetry install && \
     touch .env && \
