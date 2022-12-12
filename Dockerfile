@@ -12,7 +12,3 @@ RUN apt update && \
     chmod +x entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
-
-
-
- 
