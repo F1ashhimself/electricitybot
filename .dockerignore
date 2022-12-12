@@ -1,0 +1,6 @@
+.gitignore
+test
+.test.env
+Dockerfile
+LICENSE
+.github
