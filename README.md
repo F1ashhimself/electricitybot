@@ -15,5 +15,5 @@ Bot will ping provided IP adress specified in `IP_TO_CHECK` variable. In case if
 
 ## How to use in Docker
 1. build docker image with `docker build . -t yurnov/electricitybot`
-2. start docker container with `docker run -e API_TOKEN=${API_TOKEN} -e CHAT_ID=${CHAT_ID} and -e IP_TO_CHECK=${IP_TO_CHECK} -d --rm yurnov/electricitybot`
+2. start docker container with `docker run -e API_TOKEN=${API_TOKEN} -e CHAT_ID=${CHAT_ID} -e IP_TO_CHECK=${IP_TO_CHECK} -d --rm yurnov/electricitybot`
 Do not forget to create enviroment variables with `API_TOKEN`, `CHAT_ID` and `IP_TO_CHECK` prior run.
