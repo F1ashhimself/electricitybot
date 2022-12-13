@@ -39,5 +39,5 @@ jobs:
         with:
           context: .
           load: true
-          platform: linux/arm64
-          tags: f1ashhimself/electricitybot/:${{ github.sha }}
+          platforms: linux/arm64
+          tags: f1ashhimself/electricitybot:${{ github.sha }}
