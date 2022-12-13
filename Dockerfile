@@ -1,8 +1,8 @@
 FROM python:3.11-slim-bullseye
 
-RUN apt update && \
-    apt install -y --no-install-recommends iputils-ping && \
-    apt clean autoclean && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends iputils-ping && \
+    apt-get clean autoclean && \
     apt-get autoremove --yes && \
     rm -rf /var/lib/{apt,dpkg,cache,log}/ && \
     useradd --create-home --no-log-init --shell /bin/bash electricitybot && \
@@ -14,8 +14,8 @@ USER electricitybot
 
 WORKDIR /opt
 
-RUN export PATH=${PATH}:~/.local/bin/ && \
-    python -m pip install poetry && \
+RUN export PATH="${PATH}":~/.local/bin/ && \
+    python -m pip install --no-cache-dir poetry && \
     poetry install && \
     touch .env && \
     chmod +x entrypoint.sh

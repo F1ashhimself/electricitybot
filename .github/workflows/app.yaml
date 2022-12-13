@@ -26,3 +26,18 @@ jobs:
       - name: Run tests
         run: |
           make test
+
+      - name: Lint Dockerfile with hadolint
+        uses: hadolint/hadolint-action@v2.1.0
+        with:
+          dockerfile: Dockerfile
+          failure-threshold: error
+          ignore: DL3008,SC3009,DL3013
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          load: true
+          platform: linux/arm64
+          tags: f1ashhimself/electricitybot/:${{ GITHUB_SHA }}
