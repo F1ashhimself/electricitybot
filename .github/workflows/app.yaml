@@ -34,10 +34,14 @@ jobs:
           failure-threshold: error
           ignore: DL3008,SC3009,DL3013
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Build Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           load: true
           platforms: linux/arm64
+          no-cache: true
           tags: f1ashhimself/electricitybot:${{ github.sha }}
