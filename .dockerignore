@@ -4,4 +4,5 @@ test
 Dockerfile
 LICENSE
 .github
+pytest.ini
 Makefile
