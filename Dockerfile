@@ -17,7 +17,6 @@ WORKDIR /opt
 RUN export PATH="${PATH}":~/.local/bin/ && \
     python -m pip install --no-cache-dir poetry && \
     poetry install && \
-    touch .env && \
     chmod +x entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
