@@ -51,8 +51,7 @@ class ElectricityChecker:
         current_e_state = self.check_electricity()
         if self.previous_e_state != current_e_state:
             message = self.build_message(current_e_state)
-            kwargs = dict(chat_id=self.chat_id, message_thread_id=self.thread_id, text=message)
-            self.tg_bot.send_message(**{k: v for k, v in kwargs.items() if v is not None})
+            self.tg_bot.send_message(chat_id=self.chat_id, message_thread_id=self.thread_id, text=message)
             self.previous_e_state = current_e_state
             self.last_state_change_time = time()
 
