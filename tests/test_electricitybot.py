@@ -85,4 +85,6 @@ class TestElectricitybot:
 
         assert_that(e_checker.previous_e_state, equal_to(False))
 
-        tg_bot().send_message.assert_called_once_with(chat_id=e_checker.chat_id, text=message_to_send)
+        tg_bot().send_message.assert_called_once_with(
+            chat_id=e_checker.chat_id, message_thread_id=e_checker.thread_id, text=message_to_send
+        )
