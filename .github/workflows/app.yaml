@@ -17,7 +17,7 @@ jobs:
 
       - name: Install poetry
         run: |
-          pip install poetry==1.2.2
+          pip install poetry==1.1.15
 
       - name: Install dependencies
         run: |
