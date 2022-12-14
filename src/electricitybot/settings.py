@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     ip_to_check: str
     retries_count: int = 3
     timeout: int = 60
+    thread_id: int = None
 
     class Config:
         env_file = ".env"

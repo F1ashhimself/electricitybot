@@ -17,6 +17,7 @@ class ElectricityChecker:
         self.ip_to_check = settings.ip_to_check
         self.retries_count = settings.retries_count
         self.timeout = settings.timeout
+        self.thread_id = settings.thread_id
         self.tg_bot = telegram.Bot(token=settings.api_token)
         self.previous_e_state = self.check_electricity()
         self.last_state_change_time = None
@@ -50,7 +51,7 @@ class ElectricityChecker:
         current_e_state = self.check_electricity()
         if self.previous_e_state != current_e_state:
             message = self.build_message(current_e_state)
-            self.tg_bot.send_message(chat_id=self.chat_id, text=message)
+            self.tg_bot.send_message(chat_id=self.chat_id, message_thread_id=self.thread_id, text=message)
             self.previous_e_state = current_e_state
             self.last_state_change_time = time()
 
