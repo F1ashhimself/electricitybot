@@ -14,7 +14,9 @@ Bot that will send telegram message in case of electricity state was changed.
 Bot will ping provided IP adress specified in `IP_TO_CHECK` variable. In case if there will be no response for 4 ping requests in a row, bot will send message about power outage and vice versa.
 
 ## How to use in Docker
-Start docker container with
-`docker run -h electricitybot --restart unless-stopped -e API_TOKEN=${API_TOKEN} -e CHAT_ID=${CHAT_ID} -e IP_TO_CHECK=${IP_TO_CHECK} -d --name electricitybot ghcr.io/yurnov/electricitybot:latest`
-
+1. build docker image with `docker build . -t f1ashhimself/electricitybot`
+2. start docker container with `docker run -h electricitybot --restart unless-stopped -e API_TOKEN=${API_TOKEN} -e CHAT_ID=${CHAT_ID} -e IP_TO_CHECK=${IP_TO_CHECK} -d --name electricitybot f1ashhimself/electricitybot`
 Do not forget to create enviroment variables with `API_TOKEN`, `CHAT_ID` and `IP_TO_CHECK` prior run.
+
+## Using with Tread in Group chats
+Create `THREAD_ID` value in `.env` file or pass `THREAD_ID` enviroment variable into container
