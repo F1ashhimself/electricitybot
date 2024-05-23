@@ -19,4 +19,4 @@ Bot will ping provided IP adress specified in `IP_TO_CHECK` variable. In case if
 Do not forget to create enviroment variables with `API_TOKEN`, `CHAT_ID` and `IP_TO_CHECK` prior run.
 
 ## Using with Topic in Group chats
-Create `THREAD_ID` value for `message_thread_id` (please find [Bot API documentation](https://core.telegram.org/bots/api#sendmessage)) in `.env` file or pass `THREAD_ID` enviroment variable into container to send notification to selected Topic in Group chats with over 100 members where Topic enabled. Bot will sent notofaction to Topic called `General` for Group chats with Topic if `THREAD_ID` is not set.
+Create `THREAD_ID` value for `message_thread_id` (please find [Bot API documentation](https://core.telegram.org/bots/api#sendmessage)) in `.env` file or pass `THREAD_ID` enviroment variable into container to send notification to selected Topic in Group chats with over 100 members where Topic enabled. Bot will sent notifaction to Topic called `General` for Group chats with Topic if `THREAD_ID` is not set.
