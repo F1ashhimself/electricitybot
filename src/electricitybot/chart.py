@@ -14,6 +14,21 @@ weekdays_map = {
     7: "нд.",
 }
 
+months_map = {
+    1: "січ.",
+    2: "лют.",
+    3: "берез.",
+    4: "квіт.",
+    5: "трав.",
+    6: "черв.",
+    7: "лип.",
+    8: "серп.",
+    9: "верес.",
+    10: "жовт.",
+    11: "листоп.",
+    12: "груд.",
+}
+
 
 def build_chart(intervals: list) -> bytes:  # pragma: nocover
     def to_hours(dt):
@@ -73,7 +88,9 @@ def build_chart(intervals: list) -> bytes:  # pragma: nocover
     ax2.set_xlabel("Дата")
     ax2.set_ylabel("Світло у %")
     ax2.set_xticks(x)
-    ax2.set_xticklabels([f"{day.day}.{day.month} ({weekdays_map[day.isoweekday()]})" for day in days])
+    ax2.set_xticklabels(
+        [f"{day.day} {months_map[day.month]} {day.year} ({weekdays_map[day.isoweekday()]})" for day in days]
+    )
     ax2.set_yticks(range(0, 101, 20))
     ax2.set_yticklabels([f"{v}%" for v in range(0, 101, 20)])
 
@@ -82,7 +99,6 @@ def build_chart(intervals: list) -> bytes:  # pragma: nocover
 
         for start_h, duration_h in days_data[day]:
             ax1.broken_barh([(i, 0.8)], (start_h, duration_h), facecolors="red")
-
 
     for i, (pct, occupied) in enumerate(zip(percentages, occupied_hours_list)):
         free = 24 - occupied
@@ -105,7 +121,7 @@ def build_chart(intervals: list) -> bytes:  # pragma: nocover
         ax2.text(
             i + 0.4,
             -30,
-            f"{occ_h}ч {occ_m}м",
+            f"{occ_h}г. {occ_m}хв.",
             ha="center",
             va="bottom",
             bbox=dict(boxstyle="round,pad=0.3", facecolor="orange", alpha=0.7),
@@ -114,7 +130,7 @@ def build_chart(intervals: list) -> bytes:  # pragma: nocover
         ax2.text(
             i + 0.4,
             150,
-            f"{free_h}ч {free_m}м",
+            f"{free_h}г. {free_m}хв.",
             ha="center",
             va="top",
             bbox=dict(boxstyle="round,pad=0.3", facecolor="lightgreen", alpha=0.7),
