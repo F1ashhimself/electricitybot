@@ -85,7 +85,7 @@ jobs:
           tags: f1ashhimself/electricitybot:${{ github.sha }}
 
   docker-checks:
-    needs: codestyle
+    needs: tests
     if: success()
     runs-on: ubuntu-latest
     timeout-minutes: 10
