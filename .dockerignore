@@ -1,6 +1,6 @@
 .gitignore
 test
-.test.env
+test.env
 Dockerfile
 LICENSE
 .github

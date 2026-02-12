@@ -1,5 +1,5 @@
 from time import time
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 from freezegun import freeze_time
@@ -9,8 +9,14 @@ from electricitybot import ElectricityChecker
 from electricitybot.settings import settings
 
 
-@patch("telegram.Bot")
-@patch("electricitybot.electricitybot.sleep", Mock())
+@pytest.fixture
+def tg_bot():
+    tg_bot_mock = Mock(return_value=AsyncMock())
+    with patch("telegram.Bot", tg_bot_mock):
+        yield tg_bot_mock
+
+
+@patch("electricitybot.bot.sleep", Mock())
 class TestElectricitybot:
     @patch("electricitybot.ElectricityChecker.check_electricity", Mock(return_value=True))
     def test_init(self, tg_bot):
@@ -31,7 +37,7 @@ class TestElectricitybot:
 
     @pytest.mark.parametrize("e_state", [True, False])
     @patch("electricitybot.ElectricityChecker.check_electricity", Mock(return_value=True))
-    def test_build_message(self, _, e_state):
+    def test_build_message(self, e_state):
         e_checker = ElectricityChecker()
         message = e_checker.build_message(e_state)
 
@@ -40,7 +46,7 @@ class TestElectricitybot:
     @freeze_time("2022-04-15")
     @pytest.mark.parametrize("e_state", [True, False])
     @patch("electricitybot.ElectricityChecker.check_electricity", Mock(return_value=True))
-    def test_build_message_with_stat(self, _, e_state):
+    def test_build_message_with_stat(self, e_state):
         e_checker = ElectricityChecker()
         e_checker.last_state_change_time = time() - 3719  # 1 hour, 1 minute and 59 seconds
         stat_message = {
@@ -52,7 +58,7 @@ class TestElectricitybot:
         assert_that(message, equal_to(f"{ElectricityChecker.power_messages[e_state]}\n{stat_message[e_state]}"))
 
     @patch("electricitybot.ElectricityChecker.check_electricity", Mock(return_value=True))
-    def test_ping(self, _):
+    def test_ping(self):
         with patch("subprocess.run", Mock(return_value=Mock(returncode=0))) as run_mock:
             e_checker = ElectricityChecker()
             e_checker.ip_to_check = "7.7.7.7"
@@ -63,7 +69,7 @@ class TestElectricitybot:
         run_mock.assert_called_once_with(["ping", "-c", "1", e_checker.ip_to_check], capture_output=True)
 
     @pytest.mark.parametrize("ping_result", [True, False])
-    def test_check_electricity(self, _, ping_result):
+    def test_check_electricity(self, ping_result):
         with patch("electricitybot.ElectricityChecker.ping", Mock(return_value=True)):
             e_checker = ElectricityChecker()
 
@@ -77,11 +83,11 @@ class TestElectricitybot:
         assert_that(ping_mock.call_count, equal_to(e_checker.retries_count + 1))
 
     @patch("electricitybot.ElectricityChecker.check_electricity", Mock(side_effect=[True, False]))
-    def test_check_and_send(self, tg_bot):
+    def test_check_e_state_and_send(self, tg_bot):
         e_checker = ElectricityChecker()
         message_to_send = "test_message"
         with patch("electricitybot.ElectricityChecker.build_message", Mock(return_value=message_to_send)):
-            e_checker.check_and_send()
+            e_checker.check_e_state_and_send()
 
         assert_that(e_checker.previous_e_state, equal_to(False))
 

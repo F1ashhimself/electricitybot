@@ -103,6 +103,7 @@ celerybeat.pid
 
 # Environments
 .env
+.test.env
 .venv
 env/
 venv/
@@ -129,3 +130,4 @@ dmypy.json
 .pyre/
 
 .idea
+power_outage_intervals.*
