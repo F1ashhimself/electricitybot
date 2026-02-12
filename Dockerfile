@@ -20,7 +20,7 @@ USER electricitybot
 WORKDIR /opt
 
 RUN export PATH="${PATH}":~/.local/bin/ && \
-    python -m pip install --no-cache-dir poetry==1.1.15 && \
+    python -m pip install --no-cache-dir poetry==2.1.1 && \
     poetry install && \
     chmod +x entrypoint.sh
 

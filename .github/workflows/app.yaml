@@ -1,4 +1,4 @@
-name: Tests
+name: electricitybot-checks
 on: pull_request
 
 jobs:
@@ -35,7 +35,9 @@ jobs:
         run: |
           make test-flake
 
-  test:
+  tests:
+    needs: codestyle
+    if: success()
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -83,6 +85,8 @@ jobs:
           tags: f1ashhimself/electricitybot:${{ github.sha }}
 
   docker-checks:
+    needs: tests
+    if: success()
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
