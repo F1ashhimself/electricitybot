@@ -39,21 +39,17 @@ def build_chart(intervals: list) -> bytes:  # pragma: nocover
 
             current_day += timedelta(days=1)
 
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 10), gridspec_kw={'height_ratios': [3, 1]})
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 10), gridspec_kw={"height_ratios": [3, 1]})
     fig.suptitle("Статистика світла (за адресою Ващенка 3) за тиждень", fontsize=16)
+    fig.patch.set_facecolor("#f0f0f0")
 
     days = sorted(days_data.keys())
 
-    for i, day in enumerate(days):
-        ax1.broken_barh([(i, 0.8)], (0, 24), facecolors="green")
-
-        for start_h, duration_h in days_data[day]:
-            ax1.broken_barh([(i, 0.8)], (start_h, duration_h), facecolors="red")
-
+    ax1.set_facecolor("#fff3e0")
+    ax1.grid(True, axis="y", linestyle="--", alpha=0.5)
     ax1.set_xlim(-0.2, len(days) - 0.2)
     ax1.set_ylim(0, 24)
     ax1.set_ylabel("Світло погодинно")
-
     ax1.set_xticks([i + 0.4 for i in range(len(days))])
     ax1.set_xticklabels([])
     ax1.set_yticks(range(0, 25, 2))
@@ -69,17 +65,24 @@ def build_chart(intervals: list) -> bytes:  # pragma: nocover
 
     x = [i + 0.4 for i in range(len(days))]
 
+    ax2.set_facecolor("#fff3e0")
+    ax2.grid(True, axis="y", linestyle=":", alpha=0.3)
     ax2.plot(x, percentages, marker="o")
-
     ax2.set_xlim(-0.2, len(days) - 0.2)
     ax2.set_ylim(-40, 160)
     ax2.set_xlabel("Дата")
     ax2.set_ylabel("Світло у %")
-
     ax2.set_xticks(x)
     ax2.set_xticklabels([f"{day.day}.{day.month} ({weekdays_map[day.isoweekday()]})" for day in days])
     ax2.set_yticks(range(0, 101, 20))
     ax2.set_yticklabels([f"{v}%" for v in range(0, 101, 20)])
+
+    for i, day in enumerate(days):
+        ax1.broken_barh([(i, 0.8)], (0, 24), facecolors="green")
+
+        for start_h, duration_h in days_data[day]:
+            ax1.broken_barh([(i, 0.8)], (start_h, duration_h), facecolors="red")
+
 
     for i, (pct, occupied) in enumerate(zip(percentages, occupied_hours_list)):
         free = 24 - occupied
@@ -94,8 +97,8 @@ def build_chart(intervals: list) -> bytes:  # pragma: nocover
             i + 0.4,
             pct + 10,
             f"{pct:.0f}%",
-            ha='center',
-            va='bottom',
+            ha="center",
+            va="bottom",
             fontsize=8,
         )
 
@@ -103,18 +106,18 @@ def build_chart(intervals: list) -> bytes:  # pragma: nocover
             i + 0.4,
             -30,
             f"{occ_h}ч {occ_m}м",
-            ha='center',
-            va='bottom',
-            bbox=dict(boxstyle='round,pad=0.3', facecolor='orange', alpha=0.7),
+            ha="center",
+            va="bottom",
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="orange", alpha=0.7),
         )
 
         ax2.text(
             i + 0.4,
             150,
             f"{free_h}ч {free_m}м",
-            ha='center',
-            va='top',
-            bbox=dict(boxstyle='round,pad=0.3', facecolor='lightgreen', alpha=0.7),
+            ha="center",
+            va="top",
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="lightgreen", alpha=0.7),
         )
 
     buffer = io.BytesIO()
