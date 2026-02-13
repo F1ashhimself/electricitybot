@@ -1,11 +1,23 @@
+from datetime import datetime, timedelta
 from time import time
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 import pytest
 from freezegun import freeze_time
-from hamcrest import assert_that, equal_to, has_properties, instance_of
+from hamcrest import (
+    all_of,
+    assert_that,
+    contains_exactly,
+    equal_to,
+    has_entry,
+    has_item,
+    has_length,
+    has_properties,
+    instance_of,
+)
 
 from electricitybot import ElectricityChecker
+from electricitybot.bot import PowerOutageInterval, UKRAINE_TZ
 from electricitybot.settings import settings
 
 
@@ -94,3 +106,50 @@ class TestElectricitybot:
         tg_bot().send_message.assert_called_once_with(
             chat_id=e_checker.chat_id, message_thread_id=e_checker.thread_id, text=message_to_send
         )
+
+    @pytest.mark.parametrize("e_state", [True, False])
+    def test_save_stat(self, e_state):
+        e_checker = ElectricityChecker()
+        date_to_mock = UKRAINE_TZ.localize(datetime.fromisoformat("2022-04-15 12:34:01"))
+
+        intervals = []
+        start_time = date_to_mock
+        end_time = None
+
+        if e_state:
+            start_time = date_to_mock - timedelta(hours=3, minutes=4)
+            end_time = date_to_mock
+            intervals = [PowerOutageInterval(start_time=start_time)]
+
+        db_mock = MagicMock(get=Mock(side_effect=lambda *args, **kwargs: intervals))
+
+        with patch("electricitybot.ElectricityChecker.db", db_mock), freeze_time(date_to_mock):
+            e_checker.save_stat(e_state)
+
+        db_mock.__setitem__.assert_called_once()
+
+        assert_that(
+            db_mock.__setitem__.call_args.args,
+            contains_exactly(
+                "intervals",
+                all_of(
+                    has_length(1),
+                    has_item(
+                        has_properties(
+                            start_time=start_time,
+                            end_time=end_time,
+                        )
+                    ),
+                ),
+            ),
+        )
+
+    def test_save_stat_when_no_interval(self):
+        e_checker = ElectricityChecker()
+        date_to_mock = UKRAINE_TZ.localize(datetime.fromisoformat("2022-04-15 12:34:01"))
+
+        db_mock = {}
+        with patch("electricitybot.ElectricityChecker.db", db_mock), freeze_time(date_to_mock):
+            e_checker.save_stat(True)
+
+        assert_that(db_mock, has_entry("intervals", has_length(0)))

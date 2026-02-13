@@ -19,6 +19,9 @@ class PowerOutageInterval:
         self._start_time = start_time
         self._end_time = None
 
+    def __repr__(self):
+        return f"{self.__class__.__name__} (start_time={self.start_time}, end_time={self.end_time})"
+
     @property
     def start_time(self) -> datetime:
         return self._start_time
@@ -46,7 +49,7 @@ class ElectricityChecker:
         self.tg_bot = telegram.Bot(token=settings.api_token)
         self.previous_e_state = self.check_electricity()
         self.last_state_change_time = None
-        self.last_stats_send_date = None
+        self.stats_last_send_date = None
 
     @property
     def db(self) -> shelve.Shelf[Any]:
@@ -79,7 +82,7 @@ class ElectricityChecker:
 
     def save_stat(self, current_e_state: bool):
         intervals: list[PowerOutageInterval] = self.db.get("intervals", [])
-        if current_e_state:
+        if not current_e_state:
             intervals.append(PowerOutageInterval(datetime.now(UKRAINE_TZ)))
         elif intervals:
             last_interval = intervals[-1]
@@ -91,17 +94,19 @@ class ElectricityChecker:
     def check_and_send_stats(self):
         ukraine_now = datetime.now(UKRAINE_TZ)
 
-        if not self.last_stats_send_date:
-            self.last_stats_send_date: date = self.db.get(
+        if not self.stats_last_send_date:
+            self.stats_last_send_date: date = self.db.get(
                 "stats_last_sent_date", (ukraine_now - timedelta(days=1)).date()
             )
 
         if (
-            ukraine_now.date() != self.last_stats_send_date
+            ukraine_now.date() != self.stats_last_send_date
             and ukraine_now.isoweekday() == settings.stats_day_of_week
             and ukraine_now.hour == settings.stats_hour
         ):
             self.db["stats_last_sent_date"] = ukraine_now.date()
+            self.stats_last_send_date = ukraine_now.date()
+
             intervals: list[PowerOutageInterval] = self.db.get("intervals", [])
             filtered_intervals = []
             intervals_to_save = []
