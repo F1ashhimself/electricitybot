@@ -80,8 +80,8 @@ addopts = "-ra -q --tb=short"
 testpaths = ["tests"]
 env_override_existing_values = 1
 env_files = [
-    "envs/test.env",
-    "envs/.test.env"
+    "test.env",
+    ".test.env"
 ]
 log_level = "DEBUG"
 log_format = "%(asctime)s %(levelname)s: %(message)s"

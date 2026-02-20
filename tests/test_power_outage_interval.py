@@ -21,3 +21,12 @@ class TestPowerOutageInterval:
         interval.finalize(end_time)
 
         assert_that(interval.end_time, equal_to(end_time))
+
+    @freeze_time("2022-04-15")
+    def test_repr(self):
+        start_time = datetime.now()
+        end_time = datetime.now() + timedelta(days=1)
+        interval = PowerOutageInterval(start_time, end_time)
+        assert_that(
+            repr(interval), equal_to(f"{PowerOutageInterval.__name__} (start_time={start_time}, end_time={end_time})")
+        )

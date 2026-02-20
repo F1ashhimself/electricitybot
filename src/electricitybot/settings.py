@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from typing import Union
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -18,3 +19,19 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+@contextmanager
+def override_settings(**settings_to_override):
+    """
+    Decorator to override settings for tests.
+    """
+    old_settings = {}
+    for setting_key, setting_value in settings_to_override.items():
+        old_settings[setting_key] = getattr(settings, setting_key)
+        setattr(settings, setting_key, setting_value)
+
+    yield
+
+    for setting_key, setting_value in old_settings.items():
+        setattr(settings, setting_key, setting_value)

@@ -15,9 +15,9 @@ UKRAINE_TZ = pytz.timezone("Europe/Kyiv")  # <3
 
 
 class PowerOutageInterval:
-    def __init__(self, start_time: datetime):
+    def __init__(self, start_time: datetime, end_time: datetime | None = None):
         self._start_time = start_time
-        self._end_time = None
+        self._end_time = end_time
 
     def __repr__(self):
         return f"{self.__class__.__name__} (start_time={self.start_time}, end_time={self.end_time})"
@@ -93,6 +93,8 @@ class ElectricityChecker:
 
     def check_and_send_stats(self):
         ukraine_now = datetime.now(UKRAINE_TZ)
+        week_ago = UKRAINE_TZ.localize(datetime.combine(ukraine_now - timedelta(days=7), datetime.min.time()))
+        day_start = UKRAINE_TZ.localize(datetime.combine(ukraine_now, datetime.min.time()))
 
         if not self.stats_last_send_date:
             self.stats_last_send_date: date = self.db.get(
@@ -111,18 +113,24 @@ class ElectricityChecker:
             filtered_intervals = []
             intervals_to_save = []
             for interval in intervals:
+                # cut out intervals to work only with past week
+                if interval.start_time.date() < week_ago.date():
+                    if interval.end_time.date() < week_ago.date():
+                        continue
+
+                    new_interval = PowerOutageInterval(week_ago, interval.end_time)
+                    interval = new_interval
+
                 if interval.start_time.date() < ukraine_now.date():
                     if interval.end_time.date() >= ukraine_now.date():
-                        day_start = datetime.combine(ukraine_now, datetime.min.time())
-                        day_end = day_start + timedelta(days=1)
-
-                        new_interval = PowerOutageInterval(day_start)
-                        new_interval.finalize(interval.end_time)
+                        new_interval = PowerOutageInterval(day_start, interval.end_time)
                         intervals_to_save.append(new_interval)
 
-                        interval.finalize(day_end)
+                        interval.finalize(day_start)
 
                     filtered_intervals.append((interval.start_time, interval.end_time))
+                else:
+                    intervals_to_save.append(interval)
 
             self.db["intervals"] = intervals_to_save
 
