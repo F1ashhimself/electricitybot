@@ -1,23 +1,58 @@
-name: Tests
+name: electricitybot-checks
 on: pull_request
 
 jobs:
-  test:
+  codestyle:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
       - name: Install poetry
         run: |
-          pip install poetry==1.1.15
+          pip install poetry==2.1.1
+
+      - name: Install dependencies
+        run: |
+          poetry install
+
+      - name: Run black
+        run: |
+          make test-black
+
+      - name: Run isort
+        run: |
+          make test-isort
+
+      - name: Run flake8
+        run: |
+          make test-flake
+
+  tests:
+    needs: codestyle
+    if: success()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install poetry
+        run: |
+          pip install poetry==2.1.1
 
       - name: Install dependencies
         run: |
@@ -26,6 +61,38 @@ jobs:
       - name: Run tests
         run: |
           make test
+
+      - name: Lint Dockerfile with hadolint
+        uses: hadolint/hadolint-action@v2.1.0
+        with:
+          dockerfile: Dockerfile
+          failure-threshold: error
+          ignore: DL3008,SC3009,DL3013
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          load: true
+          platforms: linux/arm64
+          no-cache: true
+          tags: f1ashhimself/electricitybot:${{ github.sha }}
+
+  docker-checks:
+    needs: tests
+    if: success()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
 
       - name: Lint Dockerfile with hadolint
         uses: hadolint/hadolint-action@v2.1.0
