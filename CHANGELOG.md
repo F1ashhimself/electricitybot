@@ -1,3 +1,7 @@
+## 1.1.1
+- Bugfixes
+
+---
 ## 1.1.0
 - Added weekly stats (chart)
 

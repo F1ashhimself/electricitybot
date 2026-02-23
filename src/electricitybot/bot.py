@@ -1,3 +1,4 @@
+import asyncio
 import shelve
 import subprocess
 from datetime import date, datetime, timedelta
@@ -6,7 +7,6 @@ from typing import Any
 
 import pytz
 import telegram
-from asgiref.sync import async_to_sync
 
 from electricitybot.chart import build_chart
 from electricitybot.settings import settings
@@ -41,6 +41,7 @@ class ElectricityChecker:
     }
 
     def __init__(self):
+        self._loop = asyncio.new_event_loop()
         self.chat_id = settings.chat_id
         self.ip_to_check = settings.ip_to_check
         self.retries_count = settings.retries_count
@@ -136,12 +137,14 @@ class ElectricityChecker:
 
             if filtered_intervals:
                 stats_image = build_chart(filtered_intervals)
-                async_to_sync(self.tg_bot.send_photo)(
-                    chat_id=self.chat_id,
-                    message_thread_id=self.thread_id,
-                    disable_notification=True,
-                    caption="📊Статистика світла за тиждень",
-                    photo=stats_image,
+                self._loop.run_until_complete(
+                    self.tg_bot.send_photo(
+                        chat_id=self.chat_id,
+                        message_thread_id=self.thread_id,
+                        disable_notification=True,
+                        caption="📊Статистика світла за тиждень",
+                        photo=stats_image,
+                    )
                 )
 
     def check_e_state_and_send(self):
@@ -155,8 +158,8 @@ class ElectricityChecker:
                 self.save_stat(current_e_state)
 
             message = self.build_message(current_e_state)
-            async_to_sync(self.tg_bot.send_message)(
-                chat_id=self.chat_id, message_thread_id=self.thread_id, text=message
+            self._loop.run_until_complete(
+                self.tg_bot.send_message(chat_id=self.chat_id, message_thread_id=self.thread_id, text=message)
             )
             self.previous_e_state = current_e_state
             self.last_state_change_time = time()
