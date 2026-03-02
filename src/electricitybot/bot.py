@@ -133,8 +133,6 @@ class ElectricityChecker:
                 else:
                     intervals_to_save.append(interval)
 
-            self.db["intervals"] = intervals_to_save
-
             if filtered_intervals:
                 stats_image = build_chart(filtered_intervals)
                 self._loop.run_until_complete(
@@ -146,6 +144,8 @@ class ElectricityChecker:
                         photo=stats_image,
                     )
                 )
+
+            self.db["intervals"] = intervals_to_save
 
     def check_e_state_and_send(self):
         if settings.send_weekly_stats:
