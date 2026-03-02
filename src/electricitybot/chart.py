@@ -3,6 +3,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 
 import matplotlib.pyplot as plt
+import pytz
 
 weekdays_map = {
     1: "пн.",
@@ -29,6 +30,8 @@ months_map = {
     12: "груд.",
 }
 
+UKRAINE_TZ = pytz.timezone("Europe/Kyiv")  # <3
+
 
 def build_chart(intervals: list) -> bytes:  # pragma: nocover
     def to_hours(dt):
@@ -41,7 +44,7 @@ def build_chart(intervals: list) -> bytes:  # pragma: nocover
         last_day = end.date()
 
         while current_day <= last_day:
-            day_start = datetime.combine(current_day, datetime.min.time())
+            day_start = UKRAINE_TZ.localize(datetime.combine(current_day, datetime.min.time()))
             day_end = day_start + timedelta(days=1)
 
             interval_start = max(start, day_start)
