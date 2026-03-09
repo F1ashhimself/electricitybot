@@ -252,6 +252,13 @@ class TestElectricitybot:
                     (ukraine_now - timedelta(days=1)).replace(hour=23, minute=15),
                     day_start,
                 ),
+                (week_ago, week_ago),
+                (week_ago + timedelta(days=1), week_ago + timedelta(days=1)),
+                (week_ago + timedelta(days=2), week_ago + timedelta(days=2)),
+                (week_ago + timedelta(days=3), week_ago + timedelta(days=3)),
+                (week_ago + timedelta(days=4), week_ago + timedelta(days=4)),
+                (week_ago + timedelta(days=5), week_ago + timedelta(days=5)),
+                (week_ago + timedelta(days=6), week_ago + timedelta(days=6)),
             ]
         )
         tg_bot_mock().send_photo.assert_awaited_once_with(

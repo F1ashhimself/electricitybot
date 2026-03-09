@@ -50,7 +50,7 @@ def build_chart(intervals: list) -> bytes:  # pragma: nocover
             interval_start = max(start, day_start)
             interval_end = min(end, day_end)
 
-            if interval_start < interval_end:
+            if interval_start <= interval_end:
                 start_h = to_hours(interval_start)
                 duration_h = (interval_end - interval_start).total_seconds() / 3600
                 days_data[current_day].append((start_h, duration_h))
@@ -65,7 +65,7 @@ def build_chart(intervals: list) -> bytes:  # pragma: nocover
 
     ax1.set_facecolor("#fff3e0")
     ax1.grid(True, axis="y", linestyle="--", alpha=0.5)
-    ax1.set_xlim(-0.2, len(days) - 0.2)
+    ax1.set_xlim(-0.2, (len(days) or 1) - 0.2)
     ax1.set_ylim(0, 24)
     ax1.set_ylabel("Світло погодинно")
     ax1.set_xticks([i + 0.4 for i in range(len(days))])
@@ -86,7 +86,7 @@ def build_chart(intervals: list) -> bytes:  # pragma: nocover
     ax2.set_facecolor("#fff3e0")
     ax2.grid(True, axis="y", linestyle=":", alpha=0.3)
     ax2.plot(x, percentages, marker="o")
-    ax2.set_xlim(-0.2, len(days) - 0.2)
+    ax2.set_xlim(-0.2, (len(days) or 1) - 0.2)
     ax2.set_ylim(-40, 160)
     ax2.set_xlabel("Дата")
     ax2.set_ylabel("Світло у %")

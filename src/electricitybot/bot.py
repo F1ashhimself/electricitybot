@@ -113,25 +113,30 @@ class ElectricityChecker:
             intervals: list[PowerOutageInterval] = self.db.get("intervals", [])
             filtered_intervals = []
             intervals_to_save = []
-            for interval in intervals:
-                # cut out intervals to work only with past week
-                if interval.start_time.date() < week_ago.date():
-                    if interval.end_time.date() < week_ago.date():
-                        continue
+            if intervals:
+                for i in range(7):
+                    dummy_interval = week_ago + timedelta(days=i)
+                    intervals.append(PowerOutageInterval(dummy_interval, dummy_interval))
 
-                    new_interval = PowerOutageInterval(week_ago, interval.end_time)
-                    interval = new_interval
+                for interval in intervals:
+                    # cut out intervals to work only with past week
+                    if interval.start_time.date() < week_ago.date():
+                        if interval.end_time.date() < week_ago.date():
+                            continue
 
-                if interval.start_time.date() < ukraine_now.date():
-                    if interval.end_time.date() >= ukraine_now.date():
-                        new_interval = PowerOutageInterval(day_start, interval.end_time)
-                        intervals_to_save.append(new_interval)
+                        new_interval = PowerOutageInterval(week_ago, interval.end_time)
+                        interval = new_interval
 
-                        interval.finalize(day_start)
+                    if interval.start_time.date() < ukraine_now.date():
+                        if interval.end_time.date() >= ukraine_now.date():
+                            new_interval = PowerOutageInterval(day_start, interval.end_time)
+                            intervals_to_save.append(new_interval)
 
-                    filtered_intervals.append((interval.start_time, interval.end_time))
-                else:
-                    intervals_to_save.append(interval)
+                            interval.finalize(day_start)
+
+                        filtered_intervals.append((interval.start_time, interval.end_time))
+                    else:
+                        intervals_to_save.append(interval)
 
             if filtered_intervals:
                 stats_image = build_chart(filtered_intervals)
