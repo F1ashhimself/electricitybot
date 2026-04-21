@@ -63,7 +63,7 @@ class ElectricityChecker:
     def check_electricity(self) -> bool:
         if not self.ping():
             for i in range(self.retries_count):
-                sleep(2)
+                sleep(settings.sleep_between_retry)
                 if self.ping():
                     return True
             return False
