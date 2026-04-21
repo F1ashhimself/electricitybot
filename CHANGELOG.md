@@ -1,3 +1,7 @@
+## 1.1.3
+- Add ability to customize sleep between ping retries
+
+---
 ## 1.1.2
 - Bugfixes
 - Add chart column for day even when there were no outages on this day but were during current week

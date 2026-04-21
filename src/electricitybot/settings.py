@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     chat_id: str
     ip_to_check: str
     retries_count: int = 3
+    sleep_between_retry: int = 2
     timeout: int = 60
     send_weekly_stats: bool = True
     stats_day_of_week: int = 1
