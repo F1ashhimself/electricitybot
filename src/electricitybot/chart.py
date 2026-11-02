@@ -42,6 +42,8 @@ def build_chart(intervals: list) -> bytes:  # pragma: nocover
     for start, end in intervals:
         current_day = start.date()
         last_day = end.date()
+        if end > start and end.time() == datetime.min.time():
+            last_day -= timedelta(days=1)
 
         while current_day <= last_day:
             day_start = UKRAINE_TZ.localize(datetime.combine(current_day, datetime.min.time()))

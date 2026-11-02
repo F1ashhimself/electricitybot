@@ -121,14 +121,14 @@ class ElectricityChecker:
                 for interval in intervals:
                     # cut out intervals to work only with past week
                     if interval.start_time.date() < week_ago.date():
-                        if interval.end_time.date() < week_ago.date():
+                        if interval.end_time and interval.end_time.date() < week_ago.date():
                             continue
 
                         new_interval = PowerOutageInterval(week_ago, interval.end_time)
                         interval = new_interval
 
                     if interval.start_time.date() < ukraine_now.date():
-                        if interval.end_time.date() >= ukraine_now.date():
+                        if interval.end_time is None or interval.end_time.date() >= ukraine_now.date():
                             new_interval = PowerOutageInterval(day_start, interval.end_time)
                             intervals_to_save.append(new_interval)
 

@@ -1,3 +1,7 @@
+## 1.1.4
+- Bugfixes
+
+---
 ## 1.1.3
 - Add ability to customize sleep between ping retries
 
